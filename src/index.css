@@ -1,0 +1,12 @@
+.card {
+    margin-top: 1rem;
+}
+
+.card-body {
+    display: flex;
+    justify-content: space-between;
+}
+
+.edit-field {
+    display: flex;
+}
