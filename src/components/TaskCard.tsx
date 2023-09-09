@@ -10,17 +10,23 @@ type Task = {
 
 type TaskCardProps = {
     task: Task,
-    handleChange: (event:React.ChangeEvent<HTMLInputElement>) => void,
-    handleSubmit: (event:React.FormEvent) => void,
     delTasks: (id:number) => void
+    editTask: (id:number, editedTask:Task) => void
 }
 
-export default function TaskCard({task, delTasks, handleChange, handleSubmit}: TaskCardProps) {
+export default function TaskCard({task, delTasks, editTask}: TaskCardProps) {
   const [editing, setEditing] = useState(false)
+  const [editedTask, setEditedTask] = useState<Task>(task)
 
-  const handleEdit = () => {
-    setEditing(true)
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setEditedTask({...editedTask, task: e.target.value})
   }
+
+  const handleFormSubmit = (e: React.FormEvent, id:number, editedTask:Task) => {
+    e.preventDefault()
+    editTask(id, editedTask)
+  }
+
 
   return (
     <Card key={task.id}>
@@ -28,17 +34,19 @@ export default function TaskCard({task, delTasks, handleChange, handleSubmit}: T
             <Card.Title>{task.task}</Card.Title>
             <div>
               <Button onClick={() => delTasks(task.id)}>X</Button>
-              <Button onClick={handleEdit}>Edit</Button>
+              <Button onClick={() => setEditing(!editing)}>Edit</Button>
             </div>
         </Card.Body>
-        {editing && 
-          <div>
-              <Form onSubmit={handleSubmit} className="edit-field">
-                <Form.Control onChange={handleChange} name='task' value={task.task}/>
-                <Button  variant='success' type='submit'>Finish</Button>
-              </Form>
-          </div>
-        }
+            {editing && 
+              <div>
+                  <Form className="edit-field">
+                    <Form.Control value={editedTask.task} onChange={handleInputChange}/>
+                    <Button  variant='success' type='submit' onClick={(e) => {
+                      setEditing(!editing)
+                      handleFormSubmit(e, task.id, editedTask)}}>Finish</Button>
+                  </Form>
+              </div>
+            }
     </Card>
   )
 }

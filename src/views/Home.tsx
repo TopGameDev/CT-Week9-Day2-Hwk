@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react"
+import React, { useState } from "react"
 import TaskForm from "../components/TaskForm";
 import TaskCard from "../components/TaskCard";
 import CategoryType from "../types/category";
@@ -30,10 +30,14 @@ const handleFormSubmit = (event: React.FormEvent) => {
     flashMessage(`${newTask.task} has been created`, 'success')
 }
 
-const delTask = useCallback((id: number) => {
+const delTask = (id: number) => {
   setTasks(tasks.filter(task => task.id !== id));
   flashMessage(`Task has been deleted`, 'danger')
-}, [tasks])
+}
+
+const editTask = (taskId:number, editedTask:Task) => {
+  setTasks(tasks.map(task => (taskId === task.id) ? editedTask : task))
+}
 
 // const edTask = useCallback((id:number) => {
 //   const editTask = tasks.find((i) => i.id === id);
@@ -44,7 +48,7 @@ const delTask = useCallback((id: number) => {
     <>
         <h1>Please Add a Task</h1>
         <TaskForm handleChange={handleInputChange} handleSubmit={handleFormSubmit} newTask={newTask}/>
-        { tasks.map(t => <TaskCard task={t} key={t.id} delTasks={delTask} handleChange={handleInputChange} handleSubmit={handleFormSubmit}/>)}
+        { tasks.map(t => <TaskCard task={t} key={t.id} delTasks={delTask} editTask={editTask}/>)}
     </>
   )
 }
